@@ -1,4 +1,4 @@
-name: SpigotDemo
+name: Fireflies
 version: 1.0.0
-main: me.jaackson.spigotdemo.Main
+main: me.jaackson.fireflies.FirefliesPlugin
 api-version: 1.16
