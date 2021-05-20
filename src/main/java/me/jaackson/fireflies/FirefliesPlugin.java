@@ -18,7 +18,7 @@ import java.util.Random;
 public class FirefliesPlugin extends JavaPlugin implements Listener {
 
     private static final Random RANDOM = new Random();
-    public FileConfiguration config = this.getConfig();
+    private final FileConfiguration config = this.getConfig();
 
     @Override
     public void onEnable() {
