@@ -1,0 +1,25 @@
+plugins {
+    id "java"
+}
+
+archivesBaseName = "${project.archives_base_name}-${project.plugin_version}"
+group project.maven_group
+version project.version
+
+repositories {
+    maven { url "https://papermc.io/repo/repository/maven-public/" }
+}
+
+dependencies {
+    compileOnly "com.destroystokyo.paper:paper-api:${project.minecraft_version}-${project.spigot_version}"
+}
+
+task prepareRunServer(dependsOn: "build", type: Sync) {
+    from "${buildDir}/libs"
+    into "run/plugins"
+}
+
+configure([prepareRunServer]) {
+    group "runs"
+    description "Build and copy plugin to runs"
+}

@@ -1,0 +1,4 @@
+name: SpigotDemo
+version: 1.0.0
+main: me.jaackson.spigotdemo.Main
+api-version: 1.16
