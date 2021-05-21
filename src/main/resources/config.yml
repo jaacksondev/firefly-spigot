@@ -1,0 +1,14 @@
+particle: END_ROD
+block: GRASS
+speed: 0.05
+count: 5
+weight: 3
+attempts: 50
+radius: 24
+spawn-scale-x: 5
+spawn-scale-y: 5
+spawn-scale-z: 5
+min-sky-light: 12
+max-sky-light: 15
+min-time: 13000
+max-time: 23500

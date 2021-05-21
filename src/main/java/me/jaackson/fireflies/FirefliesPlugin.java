@@ -1,86 +1,62 @@
 package me.jaackson.fireflies;
 
-import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.Random;
 
-public class FirefliesPlugin extends JavaPlugin implements Listener {
+public class FirefliesPlugin extends JavaPlugin {
 
     private static final Random RANDOM = new Random();
-    private final FileConfiguration config = this.getConfig();
 
     @Override
     public void onEnable() {
-        this.config.addDefault("particle", Particle.END_ROD.name());
-        this.config.addDefault("block", Material.GRASS.name());
-        this.config.addDefault("speed", 0.05);
-
-        this.config.addDefault("weight", 25);
-        this.config.addDefault("attempts", 500);
-        this.config.addDefault("radius", 32);
-
-        this.config.addDefault("spawn-scale-x", 5);
-        this.config.addDefault("spawn-scale-y", 5);
-        this.config.addDefault("spawn-scale-z", 5);
-
-        this.config.addDefault("min-sky-light", 12);
-        this.config.addDefault("max-sky-light", 15);
-        this.config.addDefault("min-time", 13000);
-        this.config.addDefault("max-time", 23500);
-
-        this.config.options().copyDefaults(true);
-        this.saveConfig();
-
-        this.getServer().getPluginManager().registerEvents(this, this);
+        this.saveDefaultConfig();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::tick, 0, 1);
     }
 
-    @EventHandler
-    public void onEvent(ServerTickEndEvent event) {
-        Bukkit.getOnlinePlayers().forEach(player -> {
+    private void tick() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             World world = player.getWorld();
-            if (world.getTime() < this.config.getInt("min-time") || world.getTime() > this.config.getInt("max-time"))
+            if (world.getTime() < this.getConfig().getInt("min-time") || world.getTime() > this.getConfig().getInt("max-time"))
                 return;
 
             Location loc = player.getLocation();
-            for (int m = 0; m < this.config.getInt("attempts"); ++m) {
-                this.spawnFireflies(world, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), this.config.getInt("radius"));
+            for (int i = 0; i < this.getConfig().getInt("attempts"); ++i) {
+                this.spawnFireflies(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), this.getConfig().getInt("radius"));
             }
-        });
+        }
     }
 
-    private void spawnFireflies(World world, int x, int y, int z, int offset) {
-        x += RANDOM.nextInt(offset) - RANDOM.nextInt(offset);
-        y += RANDOM.nextInt(offset) - RANDOM.nextInt(offset);
-        z += RANDOM.nextInt(offset) - RANDOM.nextInt(offset);
-        Block block = world.getBlockAt(x, y, z);
-        if (block.getType() != Enum.valueOf(Material.class, Objects.requireNonNull(this.config.getString("block"))))
+    private void spawnFireflies(Player player, int x, int y, int z, int offset) {
+        x += -offset + RANDOM.nextInt(2 * offset);
+        y += -offset + RANDOM.nextInt(2 * offset);
+        z += -offset + RANDOM.nextInt(2 * offset);
+        Block block = player.getWorld().getBlockAt(x, y, z);
+        if (block.getType() != Material.matchMaterial(Objects.requireNonNull(this.getConfig().getString("block"))))
             return;
 
-        if (block.getLightFromSky() < this.config.getInt("min-sky-light") && block.getLightFromSky() > this.config.getInt("max-sky-light"))
+        if (block.getLightFromSky() < this.getConfig().getInt("min-sky-light") && block.getLightFromSky() > this.getConfig().getInt("max-sky-light"))
             return;
 
-        if (RANDOM.nextInt(this.config.getInt("weight")) != 0)
+        if (RANDOM.nextInt(this.getConfig().getInt("weight")) != 0)
             return;
 
-        world.spawnParticle(
-                Enum.valueOf(Particle.class, Objects.requireNonNull(this.config.getString("particle"))),
+        player.spawnParticle(
+                Particle.valueOf(Objects.requireNonNull(this.getConfig().getString("particle"))),
                 x, y, z,
-                1,
-                this.config.getDouble("spawn-scale-x"),
-                this.config.getDouble("spawn-scale-y"),
-                this.config.getDouble("spawn-scale-z"),
-                this.config.getDouble("speed"),
+                this.getConfig().getInt("count"),
+                this.getConfig().getDouble("spawn-scale-x"),
+                this.getConfig().getDouble("spawn-scale-y"),
+                this.getConfig().getDouble("spawn-scale-z"),
+                this.getConfig().getDouble("speed"),
                 null);
     }
 }
