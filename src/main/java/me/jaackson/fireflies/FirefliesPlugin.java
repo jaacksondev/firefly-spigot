@@ -49,7 +49,7 @@ public class FirefliesPlugin extends JavaPlugin implements Listener {
     public void onEvent(ServerTickEndEvent event) {
         Bukkit.getOnlinePlayers().forEach(player -> {
             World world = player.getWorld();
-            if (world.getTime() < this.config.getInt("min-time") && world.getTime() > this.config.getInt("max-time"))
+            if (world.getTime() < this.config.getInt("min-time") || world.getTime() > this.config.getInt("max-time"))
                 return;
 
             Location loc = player.getLocation();
