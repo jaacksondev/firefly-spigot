@@ -37,7 +37,7 @@ public class FirefliesPlugin extends JavaPlugin implements Listener {
         this.config.addDefault("min-sky-light", 12);
         this.config.addDefault("max-sky-light", 15);
         this.config.addDefault("min-time", 13000);
-        this.config.addDefault("max-time", 999);
+        this.config.addDefault("max-time", 23500);
 
         this.config.options().copyDefaults(true);
         this.saveConfig();
